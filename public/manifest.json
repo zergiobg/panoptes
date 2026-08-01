@@ -1,0 +1,22 @@
+{
+  "name": "Panoptes Network",
+  "short_name": "Panoptes",
+  "description": "La primera red comunitaria de extrema confianza y búsqueda pasiva de personas y mascotas perdidas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#ff7e33",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/panoptes_logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/panoptes_logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

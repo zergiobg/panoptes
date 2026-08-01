@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  RED_FLAG
+  SUSPENDED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  phone         String?   @unique
+  name          String
+  photoUrl      String?
+  role          Role      @default(USER)
+  status        AccountStatus @default(PENDING)
+  
+  // KYC Info
+  kycDocumentId String?
+  kycVerifiedAt DateTime?
+
+  // Graph/Tree of Endorsements (La nueva regla: 3 miembros o 1 Admin/Creador)
+  givenEndorsements    Endorsement[] @relation("GivenEndorsements")
+  receivedEndorsements Endorsement[] @relation("ReceivedEndorsements")
+
+  // Activity
+  sightings          Sighting[]
+  searchEndorsements SearchEndorsement[]
+
+  // WebAuthn / Passkeys
+  currentChallenge String?
+  authenticators   Authenticator[]
+  reports        Report[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Authenticator {
+  id                   String  @id @default(uuid())
+  credentialID         Bytes   @unique
+  credentialPublicKey  Bytes
+  counter              BigInt
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  userId               String
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum ReportType {
+  FOUND
+  LOST
+}
+
+enum ReportStatus {
+  ACTIVE
+  RESOLVED
+  ARCHIVED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Report {
+  id                  String       @id @default(uuid())
+  type                ReportType
+  category            String
+  description         String
+  location            String
+  eventDate           DateTime
+  photoUrl            String?
+  photoUrls           String[]     @default([])
+  aiSuggestedCategory String?
+  color               String?
+  licensePlate        String?
+  brandModel          String?
+  status              ReportStatus @default(ACTIVE)
+
+  // Map tracking fields (from old LossEvent)
+  latitude            Float?
+  longitude           Float?
+  radiusKm            Float        @default(1.0)
+
+  // Specific fields for Mascotas & Personas
+  name                String?
+  petType             String?
+  breed               String?
+  clothing            String?
+  ageRange            String?
+  distinctiveFeatures String?
+  cognitiveCondition  String?
+  height              String?
+  gender              String?
+  appearance          String?
+
+  // Ownership (Mock for now, via LocalStorage token)
+  creatorId           String?
+
+  // Social & Matching
+  comments            Comment[]
+  matchClaims         MatchClaim[]
+
+  // Security & Approval
+  requiresApproval    Boolean        @default(false)
+  approvalStatus      ApprovalStatus @default(APPROVED)
+
+  userId              String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  user                User?        @relation(fields: [userId], references: [id])
+  sightings           Sighting[]
+  searchEndorsements  SearchEndorsement[]
+}
+
+model SearchEndorsement {
+  id          String   @id @default(uuid())
+  reportId    String
+  endorserId  String
+  createdAt   DateTime @default(now())
+
+  report      Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  endorser    User     @relation(fields: [endorserId], references: [id], onDelete: Cascade)
+
+  @@unique([reportId, endorserId])
+}
+
+model Endorsement {
+  id          String   @id @default(uuid())
+  endorserId  String
+  endorser    User     @relation("GivenEndorsements", fields: [endorserId], references: [id], onDelete: Cascade)
+  endorseeId  String
+  endorsee    User     @relation("ReceivedEndorsements", fields: [endorseeId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([endorserId, endorseeId])
+}
+
+model OTP {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Sighting {
+  id              String      @id @default(uuid())
+  reportId        String
+  report          Report      @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  
+  reporterId      String?
+  reporter        User?       @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  
+  latitude        Float
+  longitude       Float
+  
+  comment         String?
+  photoUrl        String?
+  voiceNoteUrl    String?
+
+  createdAt       DateTime    @default(now())
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  text      String
+  author    String   @default("Anónimo")
+  createdAt DateTime @default(now())
+
+  reportId  String
+  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
+
+model MatchClaim {
+  id        String   @id @default(cuid())
+  message   String?
+  photoUrl  String
+  createdAt DateTime @default(now())
+
+  reportId  String
+  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
