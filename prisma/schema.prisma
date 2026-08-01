@@ -97,6 +97,7 @@ model Report {
   latitude            Float?
   longitude           Float?
   radiusKm            Float        @default(1.0)
+  lastExpandedAt      DateTime     @default(now())
 
   // Specific fields for Mascotas & Personas
   name                String?

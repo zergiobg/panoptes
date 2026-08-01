@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         // 24 * 60 * 60 * 1000 = 86400000ms
         const expansionThreshold = new Date(now.getTime() - 86400000);
 
-        const eventsToExpand = await prisma.lossEvent.findMany({
+        const eventsToExpand = await prisma.report.findMany({
             where: {
                 status: 'ACTIVE',
                 lastExpandedAt: {
@@ -34,10 +34,10 @@ export async function POST(request: Request) {
         // Diferentes lógicas pueden aplicar (mascotas +2km, personas +5km).
         for (const event of eventsToExpand) {
             let increment = 1.0;
-            if (event.type === 'PERSON') increment = 5.0;
-            if (event.type === 'PET') increment = 3.0;
+            if (event.category === 'Persona') increment = 5.0;
+            if (event.category === 'Mascota') increment = 3.0;
 
-            await prisma.lossEvent.update({
+            await prisma.report.update({
                 where: { id: event.id },
                 data: {
                     radiusKm: { increment },
