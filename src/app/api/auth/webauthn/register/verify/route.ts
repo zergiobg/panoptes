@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
 
     const host = req.headers.get('host') || '192.168.2.56:3000';
     const rpID = host.split(':')[0];
-    const origin = req.headers.get('origin') || `http://${host}`;
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const origin = req.headers.get('origin') || `${protocol}://${host}`;
 
     const verification = await verifyRegistrationResponse({
       response,
