@@ -232,7 +232,7 @@ export default function Home() {
                       
                       {/* Match Indicator */}
                       {report.matchClaims?.length > 0 && (
-                        <div style={{ color: '#ffcc00', fontSize: '1.2rem', title: 'Probables hallazgos reportados' }}>
+                        <div title='Probables hallazgos reportados' style={{ color: '#ffcc00', fontSize: '1.2rem' }}>
                           ⚠️ {report.matchClaims.length}
                         </div>
                       )}

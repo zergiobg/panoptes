@@ -20,15 +20,17 @@ export async function POST(request: Request) {
         }
 
         // Creación del evento. El radio inicial por defecto en Prisma es 1.0 km.
-        const newEvent = await prisma.lossEvent.create({
+        const newEvent = await prisma.report.create({
             data: {
-                title,
-                description,
-                type, // PERSON, PET, THING
+                type: 'LOST', // default
+                category: type, // PERSON, PET, THING mapped to category
+                description: title ? `${title}: ${description}` : description,
+                location: 'Desconocida',
+                eventDate: new Date(),
                 latitude,
                 longitude,
                 photoUrl,
-                reporterId
+                userId: reporterId
             }
         });
 

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
         // Insertar Avistamiento pasivo
         const sighting = await prisma.sighting.create({
             data: {
-                eventId,
+                reportId: eventId,
                 reporterId,
                 latitude,
                 longitude,
