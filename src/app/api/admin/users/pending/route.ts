@@ -11,11 +11,7 @@ export async function GET(request: Request) {
                     in: ['PENDING', 'RED_FLAG']
                 }
             },
-            include: {
-                endorser: {
-                    select: { name: true, email: true, status: true }
-                }
-            },
+
             orderBy: { createdAt: 'desc' }
         });
 
