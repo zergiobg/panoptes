@@ -14,6 +14,7 @@ export default function ReportDetail({ params }: { params: Promise<{ id: string 
   const [loading, setLoading] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   
   // Comments state
@@ -194,6 +195,33 @@ export default function ReportDetail({ params }: { params: Promise<{ id: string 
     setIsResolving(false);
   };
 
+  const handleDeleteReport = async () => {
+    if (!confirm('¿Estás seguro de que deseas ELIMINAR este reporte? Esta acción es irreversible.')) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/reports/${id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Remover de localStorage
+        const myReports = JSON.parse(localStorage.getItem('my_panoptes_reports') || '[]');
+        const updatedReports = myReports.filter((rId: string) => rId !== id);
+        localStorage.setItem('my_panoptes_reports', JSON.stringify(updatedReports));
+        
+        alert('Reporte eliminado exitosamente.');
+        router.push('/');
+      } else {
+        alert('Error al eliminar el reporte: ' + data.error);
+        setIsDeleting(false);
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error al eliminar el reporte');
+      setIsDeleting(false);
+    }
+  };
+
   if (loading) {
     return <div style={{ padding: '100px', textAlign: 'center' }}>Cargando reporte...</div>;
   }
@@ -354,13 +382,23 @@ export default function ReportDetail({ params }: { params: Promise<{ id: string 
                   </button>
                 )}
                 {isOwner && (
-                  <button 
-                    className="btn-primary" 
-                    onClick={() => router.push(`/reporte/${id}/editar`)}
-                    style={{ flex: 1, padding: '15px', fontSize: '1.1rem', background: 'rgba(255,255,255,0.1)', color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                  >
-                    <Edit size={20} /> Editar Publicación
-                  </button>
+                  <>
+                    <button 
+                      className="btn-primary" 
+                      onClick={() => router.push(`/reporte/${id}/editar`)}
+                      style={{ flex: 1, padding: '15px', fontSize: '1.1rem', background: 'rgba(255,255,255,0.1)', color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                    >
+                      <Edit size={20} /> Editar Publicación
+                    </button>
+                    <button 
+                      className="btn-primary" 
+                      onClick={handleDeleteReport}
+                      disabled={isDeleting}
+                      style={{ flex: 1, padding: '15px', fontSize: '1.1rem', background: 'rgba(255,50,50,0.1)', border: '1px solid #ff3c3c', color: '#ff3c3c', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                    >
+                      <Edit size={20} /> {isDeleting ? 'Eliminando...' : 'Eliminar Reporte'}
+                    </button>
+                  </>
                 )}
               </div>
             )}

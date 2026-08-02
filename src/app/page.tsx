@@ -90,8 +90,11 @@ export default function Home() {
               </span>
             )}
           </Link>
+          <Link href="/admin/login" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
+            <LogIn size={16} /> <span className="hide-on-mobile">Acceso</span>
+          </Link>
           <Link href="/register" className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', textDecoration: 'none' }}>
-            <LogIn size={16} /> Unirse
+            Unirse
           </Link>
         </div>
       </nav>

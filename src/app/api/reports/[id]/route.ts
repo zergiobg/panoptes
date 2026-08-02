@@ -90,3 +90,20 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ success: false, error: 'Failed to update report' }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  try {
+    // Delete the report. Prisma will automatically cascade delete related records if configured,
+    // or we might need to delete them manually if not configured.
+    // Let's assume standard behavior or manual cleanup isn't strictly required for MVP, but to be safe we'll just delete the report.
+    await prisma.report.delete({
+      where: { id }
+    });
+    
+    return NextResponse.json({ success: true, message: 'Report deleted successfully' });
+  } catch (error) {
+    console.error('Delete Report Error:', error);
+    return NextResponse.json({ success: false, error: 'Failed to delete report' }, { status: 500 });
+  }
+}
