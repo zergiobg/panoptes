@@ -431,11 +431,13 @@ export default function AdminDashboard() {
                                                     <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                                                         {user.reports.map((r: any) => (
                                                             <li key={r.id} style={{ marginBottom: '6px' }}>
-                                                                <strong style={{ color: r.type === 'LOST' ? '#ff4444' : '#33cc66' }}>
-                                                                    {r.type === 'LOST' ? 'Perdido' : 'Encontrado'}
-                                                                </strong>: {r.category}
-                                                                <br/>
-                                                                <span style={{ fontSize: '0.75rem', color: '#888' }}>{new Date(r.eventDate).toLocaleDateString()} - {r.description.substring(0,30)}...</span>
+                                                                <Link href={`/reporte/${r.id}`} style={{ textDecoration: 'none', display: 'block', padding: '4px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.02)', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}>
+                                                                    <strong style={{ color: r.type === 'LOST' ? '#ff4444' : '#33cc66' }}>
+                                                                        {r.type === 'LOST' ? 'Perdido' : 'Encontrado'}
+                                                                    </strong>: <span style={{ color: 'var(--text-primary)' }}>{r.category}</span>
+                                                                    <br/>
+                                                                    <span style={{ fontSize: '0.75rem', color: '#888' }}>{new Date(r.eventDate).toLocaleDateString()} - {r.description.substring(0,30)}...</span>
+                                                                </Link>
                                                             </li>
                                                         ))}
                                                     </ul>
@@ -451,9 +453,11 @@ export default function AdminDashboard() {
                                                     <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                                                         {user.sightings.map((s: any) => (
                                                             <li key={s.id} style={{ marginBottom: '6px' }}>
-                                                                Aportó a un caso de <strong>{s.report?.category}</strong>
-                                                                <br/>
-                                                                <span style={{ fontSize: '0.75rem', color: '#888' }}>{new Date(s.createdAt).toLocaleDateString()}</span>
+                                                                <Link href={`/reporte/${s.reportId}`} style={{ textDecoration: 'none', display: 'block', padding: '4px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.02)', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}>
+                                                                    <span style={{ color: 'var(--text-primary)' }}>Aportó a un caso de <strong>{s.report?.category}</strong></span>
+                                                                    <br/>
+                                                                    <span style={{ fontSize: '0.75rem', color: '#888' }}>{new Date(s.createdAt).toLocaleDateString()}</span>
+                                                                </Link>
                                                             </li>
                                                         ))}
                                                     </ul>
