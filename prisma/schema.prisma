@@ -199,3 +199,15 @@ model MatchClaim {
   reportId  String
   report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
 }
+
+
+model Ad {
+  id        String   @id @default(cuid())
+  title     String
+  imageUrl  String
+  linkUrl   String
+  category  String   @default("GENERAL")
+  priority  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

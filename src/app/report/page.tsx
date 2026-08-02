@@ -9,8 +9,7 @@ export default function ReportEvent() {
         description: '',
         type: 'PET',
         latitude: '',
-        longitude: '',
-        reporterId: 'demo-user-123' // Fallback for local testing if no auth context
+        longitude: ''
     });
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });

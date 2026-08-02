@@ -7,30 +7,25 @@ export async function POST(request: Request) {
         const { title, description, type, latitude, longitude, photoUrl, reporterId } = body;
 
         // Validación de integridad
-        if (!title || !type || latitude == null || longitude == null || !reporterId) {
+        if (!title || !type || latitude == null || longitude == null) {
             return NextResponse.json({ error: 'Faltan parámetros obligatorios del reporte espacial.' }, { status: 400 });
         }
 
-        // Verificación de KYC en la red "Panoptes":
-        const reporter = await prisma.user.findUnique({ where: { id: reporterId } });
-        if (!reporter || reporter.status !== 'ACTIVE') {
-            return NextResponse.json({
-                error: 'Confianza Insuficiente. Solo miembros ACTIVOS (validados por endosos KYC) pueden activar alarmas de búsqueda.'
-            }, { status: 403 });
-        }
+        // KYC check temporarily removed to allow anonymous reports
+        const finalReporterId = reporterId || null;
 
-        // Creación del evento. El radio inicial por defecto en Prisma es 1.0 km.
         const newEvent = await prisma.report.create({
             data: {
                 type: 'LOST', // default
-                category: type, // PERSON, PET, THING mapped to category
-                description: title ? `${title}: ${description}` : description,
-                location: 'Desconocida',
-                eventDate: new Date(),
+                category: type,
+                description: title + '\n' + description,
+                location: `${latitude},${longitude}`,
                 latitude,
                 longitude,
-                photoUrl,
-                userId: reporterId
+                eventDate: new Date(),
+                photoUrl: photoUrl || null,
+                creatorId: finalReporterId,
+                status: 'ACTIVE',
             }
         });
 

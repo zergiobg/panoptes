@@ -51,13 +51,18 @@ export async function POST(request: Request) {
         // Si existen variables, enviarlo de verdad!
         if (process.env.EMAIL_USER && process.env.EMAIL_APP_PASSWORD) {
             await transporter.sendMail(mailOptions);
+            return NextResponse.json({ message: 'OTP real generado y enviado a tu correo con éxito.' }, { status: 201 });
         } else {
-            // Si faltan, cae en modo simulación
-            console.log(`\n=================================\n✉️ MOCK EMAIL ENVIADO A: ${email}\n🔐 Tu código OTP en Panoptes es: ${code}\n=================================\n`);
-            return NextResponse.json({ error: 'Configura tus variables de entorno EMAIL_USER y EMAIL_APP_PASSWORD en .env para correos reales.' }, { status: 400 });
+            // TODO: Integrar servicio de correos real (ej. SendGrid, Resend, o credenciales de Gmail)
+            // Para poder registrar usuarios en producción sin mirar la consola, DEBES configurar:
+            // EMAIL_USER y EMAIL_APP_PASSWORD en las variables de entorno de Vercel.
+            console.log(`\n=================================\n✉️ [TODO] MOCK EMAIL ENVIADO A: ${email}\n🔐 Tu código OTP en Panoptes es: ${code}\n=================================\n`);
+            
+            // Retornamos 201 en desarrollo para que la UI no se bloquee si no hay SMTP configurado
+            return NextResponse.json({ 
+                message: 'OTP simulado en consola (Configura EMAIL_USER y EMAIL_APP_PASSWORD para correos reales).' 
+            }, { status: 201 });
         }
-
-        return NextResponse.json({ message: 'OTP real generado y disparado a tu cuenta de Email con éxito.' }, { status: 201 });
     } catch (error) {
         console.error('OTP Generation Error:', error);
         return NextResponse.json({ error: 'Error del servidor o credenciales invalidas procesando el correo.' }, { status: 500 });

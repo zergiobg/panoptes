@@ -6,9 +6,19 @@ export async function POST(request: Request) {
   try {
     const { imageUrl, description } = await request.json();
 
-    // Mock processing delay for realism
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // TODO: Connect real AI Provider (e.g., Google Gemini, OpenAI)
+    // Replace this check with your actual environment variable
+    const AI_API_KEY = process.env.PANOPTES_AI_API_KEY;
 
+    if (AI_API_KEY) {
+      // --- SKELETON FOR REAL AI INTEGRATION ---
+      // const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', { ... });
+      // const suggestedCategory = extractFromAI(aiResponse);
+      // return NextResponse.json({ success: true, suggestedCategory });
+      console.log('AI Integration is configured but not fully implemented yet.');
+    }
+
+    // --- FALLBACK MOCK LOGIC ---
     let suggestedCategory = 'Otro';
     
     if (description) {

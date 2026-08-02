@@ -5,19 +5,13 @@ export async function POST(req: Request) {
   try {
     const { reportId, latitude, longitude, comment, photoUrl } = await req.json();
 
-    // The current reporter ID could come from a session cookie.
-    // For now we use the Genesis user ID or a placeholder if auth isn't fully active on this route.
-    // Assuming Genesis user exists for testing purposes, or we find a generic user.
-    const user = await prisma.user.findFirst();
-
-    if (!user) {
-      return NextResponse.json({ error: 'No user found' }, { status: 400 });
-    }
-
+    // In production, we'd extract the user from the session cookie here.
+    // For now, we allow anonymous sightings (reporterId = undefined).
+    
     const sighting = await prisma.sighting.create({
       data: {
         reportId,
-        reporterId: user.id,
+        reporterId: undefined, // Replace with actual user ID when sessions are added
         latitude,
         longitude,
         comment,
