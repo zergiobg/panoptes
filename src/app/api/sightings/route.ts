@@ -5,6 +5,9 @@ import { authenticateAndCheckSuspension } from '@/lib/auth';
 export async function POST(req: Request) {
   try {
     const auth = await authenticateAndCheckSuspension();
+    if (!auth.isAuthenticated) {
+        return NextResponse.json({ error: 'Debes iniciar sesión para interactuar.' }, { status: 401 });
+    }
     if (auth.isSuspended) {
         return NextResponse.json({ error: 'Cuenta Suspendida. Interacciones desactivadas.' }, { status: 403 });
     }

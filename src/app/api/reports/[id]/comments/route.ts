@@ -6,6 +6,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { id } = await params;
   try {
     const auth = await authenticateAndCheckSuspension();
+    if (!auth.isAuthenticated) {
+        return NextResponse.json({ success: false, error: 'Debes iniciar sesión para interactuar.' }, { status: 401 });
+    }
     if (auth.isSuspended) {
         return NextResponse.json({ success: false, error: 'Cuenta Suspendida. Interacciones desactivadas.' }, { status: 403 });
     }

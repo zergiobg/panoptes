@@ -5,6 +5,9 @@ import { authenticateAndCheckSuspension } from '@/lib/auth';
 export async function POST(request: Request) {
   try {
     const auth = await authenticateAndCheckSuspension();
+    if (!auth.isAuthenticated) {
+        return NextResponse.json({ success: false, error: 'Debes iniciar sesión para interactuar.' }, { status: 401 });
+    }
     if (auth.isSuspended) {
         return NextResponse.json({ success: false, error: 'Cuenta Suspendida. Interacciones desactivadas.' }, { status: 403 });
     }
@@ -17,7 +20,6 @@ export async function POST(request: Request) {
       creatorId
     } = body;
 
-    // Optional validation logic for requiring approval for vehicles or specific categories
     const isVehicleOrHighValue = category === 'Vehículo' || category === 'Dispositivos' || category === 'Otro';
     const requiresApproval = isVehicleOrHighValue;
     const approvalStatus = requiresApproval ? 'PENDING' : 'APPROVED';
@@ -48,7 +50,8 @@ export async function POST(request: Request) {
         height,
         gender,
         appearance,
-        creatorId,
+        creatorId: auth.user?.id || creatorId, // Keep for legacy
+        userId: auth.user?.id, // This links the report to the User table!
         requiresApproval,
         approvalStatus
       }
