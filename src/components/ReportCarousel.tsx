@@ -68,8 +68,8 @@ export default function ReportCarousel() {
 
   if (reports.length === 0) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-400"></div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+        <p style={{ color: 'var(--text-secondary)' }}>Cargando reportes...</p>
       </div>
     );
   }
@@ -77,55 +77,65 @@ export default function ReportCarousel() {
   const currentReport = reports[currentIndex];
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto">
+    <div style={{ position: 'relative', width: '100%', maxWidth: '900px', margin: '0 auto' }}>
       {/* Glassmorphism Container */}
-      <div className="relative overflow-hidden rounded-3xl backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl transition-all duration-500 hover:bg-white/15">
+      <div className="glass-panel" style={{ 
+          display: 'flex', 
+          flexDirection: 'row', 
+          flexWrap: 'wrap',
+          overflow: 'hidden', 
+          borderRadius: 'var(--radius-lg)', 
+          minHeight: '400px',
+          position: 'relative'
+        }}>
         
-        <div className="flex flex-col md:flex-row h-full">
-          {/* Image Section */}
-          <div className="w-full md:w-1/2 h-64 md:h-96 relative overflow-hidden group">
-            {currentReport.imageUrl ? (
-              <img 
-                src={currentReport.imageUrl} 
-                alt={currentReport.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-            ) : (
-              <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                <span className="text-slate-500">No Image</span>
-              </div>
-            )}
-            <div className="absolute top-4 left-4">
-              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md ${
-                currentReport.status === 'Lost' ? 'bg-red-500/80 text-white' : 'bg-emerald-500/80 text-white'
-              }`}>
-                {currentReport.status}
-              </span>
+        {/* Image Section */}
+        <div style={{ flex: '1 1 300px', position: 'relative', minHeight: '300px' }}>
+          {currentReport.imageUrl ? (
+            <img 
+              src={currentReport.imageUrl} 
+              alt={currentReport.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>Sin Imagen</span>
             </div>
+          )}
+          <div style={{ position: 'absolute', top: '15px', left: '15px' }}>
+            <span style={{
+                padding: '6px 12px', 
+                borderRadius: '20px', 
+                fontSize: '0.75rem', 
+                fontWeight: 'bold', 
+                textTransform: 'uppercase', 
+                backgroundColor: currentReport.status === 'Lost' ? 'rgba(255, 60, 60, 0.8)' : 'rgba(51, 204, 102, 0.8)',
+                color: '#fff',
+                backdropFilter: 'blur(4px)'
+              }}>
+              {currentReport.status === 'Lost' ? 'Perdido' : 'Encontrado'}
+            </span>
           </div>
+        </div>
 
-          {/* Content Section */}
-          <div className="w-full md:w-1/2 p-8 flex flex-col justify-center space-y-6 relative">
-            <div className="space-y-2">
-              <p className="text-emerald-400 text-sm font-medium tracking-wide">
-                {new Date(currentReport.date).toLocaleDateString(undefined, {
-                  year: 'numeric', month: 'long', day: 'numeric'
-                })}
-              </p>
-              <h2 className="text-3xl font-bold text-white leading-tight">
-                {currentReport.title}
-              </h2>
-            </div>
-            
-            <p className="text-slate-300 leading-relaxed">
-              {currentReport.description}
-            </p>
+        {/* Content Section */}
+        <div style={{ flex: '1 1 300px', padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <p style={{ color: 'var(--accent-main)', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>
+            {new Date(currentReport.date).toLocaleDateString(undefined, {
+              year: 'numeric', month: 'long', day: 'numeric'
+            })}
+          </p>
+          <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '15px', lineHeight: '1.2' }}>
+            {currentReport.title}
+          </h2>
+          
+          <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '30px' }}>
+            {currentReport.description}
+          </p>
 
-            <button className="self-start mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/10 backdrop-blur-sm flex items-center gap-2">
-              View Details
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
+          <div>
+            <button className="btn-primary">
+              Ver Detalles
             </button>
           </div>
         </div>
@@ -133,34 +143,43 @@ export default function ReportCarousel() {
         {/* Carousel Controls */}
         <button 
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors backdrop-blur-sm"
-          aria-label="Previous slide"
+          style={{
+            position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)',
+            background: 'rgba(0,0,0,0.4)', color: '#fff', border: 'none', borderRadius: '50%',
+            width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(4px)'
+          }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          &#10094;
         </button>
         
         <button 
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors backdrop-blur-sm"
-          aria-label="Next slide"
+          style={{
+            position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)',
+            background: 'rgba(0,0,0,0.4)', color: '#fff', border: 'none', borderRadius: '50%',
+            width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(4px)'
+          }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          &#10095;
         </button>
 
         {/* Indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+        <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px' }}>
           {reports.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                idx === currentIndex ? 'bg-emerald-400 w-6' : 'bg-white/30 hover:bg-white/50'
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
+              style={{
+                width: idx === currentIndex ? '24px' : '10px',
+                height: '10px',
+                borderRadius: '10px',
+                border: 'none',
+                background: idx === currentIndex ? 'var(--accent-main)' : 'rgba(255,255,255,0.3)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
             />
           ))}
         </div>
