@@ -78,10 +78,10 @@ export default function PushManager() {
                 disabled={isSubscribed || loading}
                 className={isSubscribed ? '' : 'btn-primary'}
                 style={{ 
-                    display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', borderRadius: '12px', fontSize: '1rem', fontWeight: 600, border: 'none', cursor: (isSubscribed || loading) ? 'not-allowed' : 'pointer', transition: 'all 0.3s',
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', borderRadius: '12px', fontSize: '1rem', fontWeight: 600, cursor: (isSubscribed || loading) ? 'not-allowed' : 'pointer', transition: 'all 0.3s',
                     background: isSubscribed ? 'rgba(51, 204, 102, 0.2)' : undefined,
                     color: isSubscribed ? '#33cc66' : undefined,
-                    border: isSubscribed ? '1px solid rgba(51, 204, 102, 0.4)' : undefined,
+                    border: isSubscribed ? '1px solid rgba(51, 204, 102, 0.4)' : 'none',
                 }}
             >
                 {loading ? <Loader2 size={20} className="animate-spin" /> : (isSubscribed ? <Bell size={20} /> : <BellOff size={20} />)}
