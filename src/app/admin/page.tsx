@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Users, AlertTriangle, UserCheck, ShieldOff, Search, MapPin, List, Activity } from 'lucide-react';
+import { Users, AlertTriangle, UserCheck, ShieldOff, Search, MapPin, List, Activity, Megaphone } from 'lucide-react';
 
 interface UserItem {
     id: string;
@@ -12,31 +12,33 @@ interface UserItem {
     createdAt: string;
     photoUrl?: string;
     endorser?: { name: string; email: string; status: string };
+    reports?: any[];
+    sightings?: any[];
 }
 
 export default function AdminDashboard() {
-    const [users, setUsers] = useState<UserItem[]>([]);
+    const [pendingUsers, setPendingUsers] = useState<UserItem[]>([]);
+    const [allUsers, setAllUsers] = useState<UserItem[]>([]);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [actionMsg, setActionMsg] = useState('');
-
-    // Para el demo usamos un admin ID fijo
-    const ADMIN_ID = 'your-admin-user-id';
-
     const [pendingReports, setPendingReports] = useState<any[]>([]);
 
     const fetchPending = async () => {
         setLoading(true);
         try {
-            const [resUsers, resStats, resReports] = await Promise.all([
+            const [resPending, resAll, resStats, resReports] = await Promise.all([
                 fetch('/api/admin/users/pending'),
+                fetch('/api/admin/users'),
                 fetch('/api/admin/stats'),
                 fetch('/api/admin/reports/pending')
             ]);
-            const dataUsers = await resUsers.json();
+            const dataPending = await resPending.json();
+            const dataAll = await resAll.json();
             const dataStats = await resStats.json();
             const dataReports = await resReports.json();
-            setUsers(dataUsers.users || []);
+            setPendingUsers(dataPending.users || []);
+            setAllUsers(dataAll.users || []);
             setStats(dataStats);
             setPendingReports(dataReports.reports || []);
         } catch {
@@ -138,8 +140,8 @@ export default function AdminDashboard() {
                         }}>
                         <Users size={32} />
                         Gestión de Usuarios
-                        {users.length > 0 && (
-                            <span style={{ background: '#ff3333', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontSize: '0.75rem', position: 'absolute', transform: 'translate(40px, -40px)' }}>{users.length}</span>
+                        {pendingUsers.length > 0 && (
+                            <span style={{ background: '#ff3333', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontSize: '0.75rem', position: 'absolute', transform: 'translate(40px, -40px)' }}>{pendingUsers.length}</span>
                         )}
                     </button>
                     <button 
@@ -281,54 +283,135 @@ export default function AdminDashboard() {
 
                 {/* Users table */}
                 {activeTab === 'USERS' && (
-                    <div className="glass-panel animate-in" style={{ padding: '0', overflow: 'hidden' }}>
-                        <div style={{ padding: '20px', borderBottom: '1px solid var(--border-glass)' }}>
-                            <h3 style={{ margin: 0 }}>Usuarios en Revisión KYC</h3>
-                        </div>
-
-                        {loading ? (
-                            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Cargando identidades...</div>
-                        ) : users.length === 0 ? (
-                            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                                ✅ No hay usuarios pendientes de revisión en este momento.
-                            </div>
-                        ) : (
-                            users.map((user, i) => (
-                                <div key={user.id} style={{
-                                    padding: '20px',
-                                    borderBottom: i < users.length - 1 ? '1px solid var(--border-glass)' : 'none',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px'
-                                }}>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
-                                            <span style={{
-                                                display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600,
-                                                backgroundColor: `${statusColor(user.status)}22`, color: statusColor(user.status), border: `1px solid ${statusColor(user.status)}44`
-                                            }}>{user.status}</span>
-                                            <strong>{user.name}</strong>
-                                        </div>
-                                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '2px 0' }}>📧 {user.email} {user.phone ? `| 📱 ${user.phone}` : ''}</p>
-                                        {user.endorser && (
-                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '2px 0' }}>
-                                                🔗 Endosador: {user.endorser.name} ({user.endorser.status})
-                                            </p>
-                                        )}
-                                        <p style={{ color: '#555', fontSize: '0.75rem', margin: '2px 0' }}>ID: {user.id}</p>
-                                    </div>
-
-                                    <div style={{ display: 'flex', gap: '10px' }}>
-                                        <button onClick={() => handleAction(user.id, 'APPROVE')}
-                                            style={{ padding: '8px 16px', background: 'rgba(51,204,102,0.2)', border: '1px solid #33cc66', color: '#33cc66', borderRadius: '6px', cursor: 'pointer' }}>
-                                            Aprobar
-                                        </button>
-                                        <button onClick={() => handleAction(user.id, 'REJECT')}
-                                            style={{ padding: '8px 16px', background: 'rgba(255,60,60,0.2)', border: '1px solid #ff3c3c', color: '#ff3c3c', borderRadius: '6px', cursor: 'pointer' }}>
-                                            Rechazar
-                                        </button>
-                                    </div>
+                    <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                        
+                        {/* Pending KYC Users */}
+                        {pendingUsers.length > 0 && (
+                            <div className="glass-panel" style={{ padding: '0', overflow: 'hidden', border: '1px solid #ffcc00' }}>
+                                <div style={{ padding: '20px', borderBottom: '1px solid var(--border-glass)', background: 'rgba(255,204,0,0.1)' }}>
+                                    <h3 style={{ margin: 0, color: '#ffcc00', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <AlertTriangle size={20} /> Usuarios en Revisión KYC Pendiente
+                                    </h3>
                                 </div>
-                            ))
+
+                                {pendingUsers.map((user, i) => (
+                                    <div key={user.id} style={{
+                                        padding: '20px',
+                                        borderBottom: i < pendingUsers.length - 1 ? '1px solid var(--border-glass)' : 'none',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px'
+                                    }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
+                                                <span style={{
+                                                    display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600,
+                                                    backgroundColor: `${statusColor(user.status)}22`, color: statusColor(user.status), border: `1px solid ${statusColor(user.status)}44`
+                                                }}>{user.status}</span>
+                                                <strong>{user.name}</strong>
+                                            </div>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '2px 0' }}>📧 {user.email} {user.phone ? `| 📱 ${user.phone}` : ''}</p>
+                                            {user.endorser && (
+                                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '2px 0' }}>
+                                                    🔗 Endosador: {user.endorser.name} ({user.endorser.status})
+                                                </p>
+                                            )}
+                                            <p style={{ color: '#555', fontSize: '0.75rem', margin: '2px 0' }}>ID: {user.id}</p>
+                                        </div>
+
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            <button onClick={() => handleAction(user.id, 'APPROVE')}
+                                                style={{ padding: '8px 16px', background: 'rgba(51,204,102,0.2)', border: '1px solid #33cc66', color: '#33cc66', borderRadius: '6px', cursor: 'pointer' }}>
+                                                Aprobar
+                                            </button>
+                                            <button onClick={() => handleAction(user.id, 'REJECT')}
+                                                style={{ padding: '8px 16px', background: 'rgba(255,60,60,0.2)', border: '1px solid #ff3c3c', color: '#ff3c3c', borderRadius: '6px', cursor: 'pointer' }}>
+                                                Rechazar
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         )}
+
+                        {/* All Users Directory */}
+                        <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
+                            <div style={{ padding: '20px', borderBottom: '1px solid var(--border-glass)' }}>
+                                <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <List size={20} /> Directorio Completo de Identidades
+                                </h3>
+                            </div>
+
+                            {loading ? (
+                                <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Cargando identidades...</div>
+                            ) : allUsers.length === 0 ? (
+                                <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                                    No hay usuarios registrados.
+                                </div>
+                            ) : (
+                                allUsers.map((user, i) => (
+                                    <div key={user.id} style={{
+                                        padding: '20px',
+                                        borderBottom: i < allUsers.length - 1 ? '1px solid var(--border-glass)' : 'none',
+                                        display: 'flex', flexWrap: 'wrap', gap: '20px'
+                                    }}>
+                                        {/* User Basic Info */}
+                                        <div style={{ flex: '1 1 300px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
+                                                <span style={{
+                                                    display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600,
+                                                    backgroundColor: `${statusColor(user.status)}22`, color: statusColor(user.status), border: `1px solid ${statusColor(user.status)}44`
+                                                }}>{user.status}</span>
+                                                <strong style={{ fontSize: '1.1rem' }}>{user.name}</strong>
+                                            </div>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '4px 0' }}>📧 {user.email}</p>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '4px 0' }}>📱 {user.phone || 'N/A'}</p>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', margin: '8px 0 0 0' }}>Registrado: {new Date(user.createdAt).toLocaleDateString()}</p>
+                                            <p style={{ color: '#555', fontSize: '0.75rem', margin: '2px 0' }}>ID: {user.id}</p>
+                                        </div>
+
+                                        {/* User Interactions */}
+                                        <div style={{ flex: '2 1 400px', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                                            {/* Reports column */}
+                                            <div style={{ flex: 1, minWidth: '200px', background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                                <h4 style={{ margin: '0 0 10px 0', fontSize: '0.9rem', color: 'var(--text-primary)' }}>Reportes Creados ({user.reports?.length || 0})</h4>
+                                                {user.reports && user.reports.length > 0 ? (
+                                                    <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                                                        {user.reports.map((r: any) => (
+                                                            <li key={r.id} style={{ marginBottom: '6px' }}>
+                                                                <strong style={{ color: r.type === 'LOST' ? '#ff4444' : '#33cc66' }}>
+                                                                    {r.type === 'LOST' ? 'Perdido' : 'Encontrado'}
+                                                                </strong>: {r.category}
+                                                                <br/>
+                                                                <span style={{ fontSize: '0.75rem', color: '#888' }}>{new Date(r.eventDate).toLocaleDateString()} - {r.description.substring(0,30)}...</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p style={{ fontSize: '0.85rem', color: '#555', margin: 0 }}>Sin reportes</p>
+                                                )}
+                                            </div>
+
+                                            {/* Sightings column */}
+                                            <div style={{ flex: 1, minWidth: '200px', background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                                <h4 style={{ margin: '0 0 10px 0', fontSize: '0.9rem', color: 'var(--text-primary)' }}>Avistamientos / Aportes ({user.sightings?.length || 0})</h4>
+                                                {user.sightings && user.sightings.length > 0 ? (
+                                                    <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                                                        {user.sightings.map((s: any) => (
+                                                            <li key={s.id} style={{ marginBottom: '6px' }}>
+                                                                Aportó a un caso de <strong>{s.report?.category}</strong>
+                                                                <br/>
+                                                                <span style={{ fontSize: '0.75rem', color: '#888' }}>{new Date(s.createdAt).toLocaleDateString()}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p style={{ fontSize: '0.85rem', color: '#555', margin: 0 }}>Sin interacciones</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </div>
                 )}
 

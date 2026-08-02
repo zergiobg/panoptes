@@ -12,6 +12,12 @@ export async function GET() {
                             select: { name: true, email: true, status: true }
                         }
                     }
+                },
+                reports: {
+                    select: { id: true, type: true, category: true, description: true, eventDate: true }
+                },
+                sightings: {
+                    select: { id: true, createdAt: true, report: { select: { type: true, category: true } } }
                 }
             }
         });
