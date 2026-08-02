@@ -10,11 +10,27 @@ export default function Home() {
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [pendingApprovals, setPendingApprovals] = useState(0);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    fetchMe();
     fetchReports();
     checkPendingApprovals();
   }, [categoryFilter]);
+
+  const fetchMe = async () => {
+    try {
+      const res = await fetch('/api/me');
+      const data = await res.json();
+      if (data.loggedIn) {
+        setCurrentUser(data.user);
+        setIsAdmin(data.isAdmin);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const checkPendingApprovals = async () => {
     try {
@@ -61,8 +77,13 @@ export default function Home() {
         borderBottom: '1px solid rgba(255,255,255,0.05)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {/* Fallback image style in case logo is missing */}
-          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-main), #ffcc00)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000' }}>P</div>
+          {currentUser?.photoUrl && !currentUser.photoUrl.startsWith('pending') ? (
+            <img src={currentUser.photoUrl} alt={currentUser.name} style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-main)' }} />
+          ) : (
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-main), #ffcc00)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', fontSize: '1.2rem' }}>
+              {currentUser ? currentUser.name.charAt(0).toUpperCase() : 'P'}
+            </div>
+          )}
           <span style={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '-0.5px' }} className="hide-on-mobile">Panoptes</span>
         </div>
         <div className="mobile-nav-gap" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
@@ -75,24 +96,29 @@ export default function Home() {
           <Link href="/map" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
             <Map size={16} /> <span className="hide-on-mobile">Mapa</span>
           </Link>
-          <Link href="/admin" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', position: 'relative' }}>
-            <Shield size={16} /> 
-            <span className="hide-on-mobile">Admin</span>
-            {pendingApprovals > 0 && (
-              <span style={{
-                position: 'absolute', top: '-8px', right: '-12px',
-                background: '#ff3333', color: '#fff', fontSize: '0.65rem', fontWeight: 'bold',
-                width: '18px', height: '18px', borderRadius: '50%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 0 8px rgba(255,51,51,0.6)'
-              }}>
-                {pendingApprovals > 9 ? '9+' : pendingApprovals}
-              </span>
-            )}
-          </Link>
-          <Link href="/admin/login" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
-            <LogIn size={16} /> <span className="hide-on-mobile">Acceso</span>
-          </Link>
+          
+          {isAdmin && (
+            <>
+              <Link href="/admin" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', position: 'relative' }}>
+                <Shield size={16} /> 
+                <span className="hide-on-mobile">Admin</span>
+                {pendingApprovals > 0 && (
+                  <span style={{
+                    position: 'absolute', top: '-8px', right: '-12px',
+                    background: '#ff3333', color: '#fff', fontSize: '0.65rem', fontWeight: 'bold',
+                    width: '18px', height: '18px', borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 0 8px rgba(255,51,51,0.6)'
+                  }}>
+                    {pendingApprovals > 9 ? '9+' : pendingApprovals}
+                  </span>
+                )}
+              </Link>
+              <Link href="/admin/login" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
+                <LogIn size={16} /> <span className="hide-on-mobile">Acceso</span>
+              </Link>
+            </>
+          )}
           <Link href="/register" className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', textDecoration: 'none' }}>
             Unirse
           </Link>
