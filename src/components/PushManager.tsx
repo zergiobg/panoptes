@@ -23,8 +23,14 @@ export default function PushManager() {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [supported, setSupported] = useState(true);
+    const [isIOS, setIsIOS] = useState(false);
 
     useEffect(() => {
+        // Detect iOS
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
+        setIsIOS(isIosDevice);
+
         if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
             setSupported(false);
             return;
@@ -61,7 +67,11 @@ export default function PushManager() {
             alert('¡Alertas activadas con éxito! Recibirás notificaciones en tiempo real.');
         } catch (err) {
             console.error('Error al suscribir:', err);
-            alert('Error al activar notificaciones. Asegúrate de dar permisos en tu navegador.');
+            if (isIOS) {
+                alert('Error en iOS: Asegúrate de haber añadido Panoptes a tu "Pantalla de Inicio" antes de activar las notificaciones.');
+            } else {
+                alert('Error al activar notificaciones. Asegúrate de dar permisos en tu navegador.');
+            }
         }
         setLoading(false);
     };
@@ -92,6 +102,14 @@ export default function PushManager() {
                 {loading ? <Loader2 size={20} className="animate-spin" /> : (isSubscribed ? <Bell size={20} /> : <BellOff size={20} />)}
                 {isSubscribed ? 'Alertas Activadas' : 'Activar Alertas'}
             </button>
+
+            {isIOS && !isSubscribed && (
+                <div style={{ flexBasis: '100%', marginTop: '10px', padding: '12px', background: 'rgba(255,170,0,0.1)', border: '1px solid rgba(255,170,0,0.3)', borderRadius: '8px' }}>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#ffaa00' }}>
+                        <strong>📱 Importante en iPhone/iPad:</strong> Para poder recibir notificaciones, primero debes tocar el botón de "Compartir" de Safari y elegir <strong>"Añadir a inicio"</strong>. Luego, abre la aplicación desde tu pantalla de inicio y activa las alertas.
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
