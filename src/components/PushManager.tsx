@@ -64,26 +64,28 @@ export default function PushManager() {
     if (!supported) return <p className="text-sm text-gray-500">Notificaciones Push no soportadas en este navegador.</p>;
 
     return (
-        <div className="glass-panel p-4 flex items-center justify-between mt-4 border border-[var(--glass-border)]">
-            <div>
-                <h3 className="text-[var(--text-primary)] font-bold text-lg flex items-center gap-2">
-                    Notificaciones en Tiempo Real
+        <div className="glass-panel" style={{ padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', marginBottom: '30px', flexWrap: 'wrap', gap: '15px' }}>
+            <div style={{ flex: '1 1 250px' }}>
+                <h3 style={{ margin: '0 0 5px 0', color: 'var(--text-primary)', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Bell size={24} color="var(--accent-main)" /> Notificaciones en Tiempo Real
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] mt-1">
-                    Recibe alertas inmediatas si alguien encuentra algo cerca.
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                    Recibe alertas inmediatas si alguien encuentra o reporta algo cerca de tu ubicación.
                 </p>
             </div>
             <button
                 onClick={handleSubscribe}
                 disabled={isSubscribed || loading}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                    isSubscribed 
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                    : 'btn-primary'
-                }`}
+                className={isSubscribed ? '' : 'btn-primary'}
+                style={{ 
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', borderRadius: '12px', fontSize: '1rem', fontWeight: 600, border: 'none', cursor: (isSubscribed || loading) ? 'not-allowed' : 'pointer', transition: 'all 0.3s',
+                    background: isSubscribed ? 'rgba(51, 204, 102, 0.2)' : undefined,
+                    color: isSubscribed ? '#33cc66' : undefined,
+                    border: isSubscribed ? '1px solid rgba(51, 204, 102, 0.4)' : undefined,
+                }}
             >
-                {loading ? <Loader2 size={16} className="animate-spin" /> : (isSubscribed ? <Bell size={16} /> : <BellOff size={16} />)}
-                {isSubscribed ? 'Activadas' : 'Activar Alertas'}
+                {loading ? <Loader2 size={20} className="animate-spin" /> : (isSubscribed ? <Bell size={20} /> : <BellOff size={20} />)}
+                {isSubscribed ? 'Alertas Activadas' : 'Activar Alertas'}
             </button>
         </div>
     );
