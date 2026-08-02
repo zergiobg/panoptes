@@ -179,15 +179,13 @@ export default function ReportDetail({ params }: { params: Promise<{ id: string 
     if (!confirm('¿Estás seguro de marcar este caso como "Final Feliz"? Esto significa que lo perdido retornó a manos de su dueño. El caso se cerrará y desaparecerá del mapa.')) return;
     setIsResolving(true);
     try {
-      const res = await fetch(`/api/reports/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'RESOLVE' })
+      const res = await fetch(`/api/reports/${id}/resolve`, {
+        method: 'POST',
       });
       const data = await res.json();
       if (data.success) {
         fetchReport();
-        alert('¡Final Feliz! 🥳 El caso ha sido cerrado y guardado en las estadísticas.');
+        alert('¡Autoeureka! 🥳 El caso ha sido cerrado y marcado como recuperado por ti mismo.');
       }
     } catch (e) {
       console.error(e);
@@ -350,9 +348,9 @@ export default function ReportDetail({ params }: { params: Promise<{ id: string 
                     className="btn-primary" 
                     onClick={handleResolveCase}
                     disabled={isResolving}
-                    style={{ flex: 1, padding: '15px', fontSize: '1.1rem', background: '#ffcc00', color: '#000', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                    style={{ flex: 1, padding: '15px', fontSize: '1.1rem', background: 'linear-gradient(135deg, #ff9900, #ffcc00)', color: '#000', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(255, 204, 0, 0.3)', border: '1px solid rgba(255,255,255,0.4)', borderRadius: '12px', transition: 'all 0.3s ease' }}
                   >
-                    <CheckCircle size={20} /> {isResolving ? 'Resolviendo...' : '🎯 Lo encontré yo mismo'}
+                    <CheckCircle size={20} /> {isResolving ? 'Resolviendo...' : '🎯 Autoeureka (Lo encontré)'}
                   </button>
                 )}
                 {isOwner && (

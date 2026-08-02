@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Bell, AlertTriangle, MapPin } from 'lucide-react';
+import PushManager from '@/components/PushManager';
 
 export default function NotificacionesPage() {
   const router = useRouter();
@@ -77,6 +78,8 @@ export default function NotificacionesPage() {
           <Bell size={36} color="var(--accent-main)" />
           Centro de Alertas
         </h1>
+
+        <PushManager />
 
         {loading ? (
           <div className="pulse" style={{ textAlign: 'center', padding: '50px' }}>Buscando alertas recientes...</div>

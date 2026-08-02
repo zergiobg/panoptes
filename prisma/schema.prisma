@@ -19,14 +19,14 @@ enum AccountStatus {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  phone         String?   @unique
-  name          String
-  photoUrl      String?
-  role          Role      @default(USER)
-  status        AccountStatus @default(PENDING)
-  
+  id       String        @id @default(uuid())
+  email    String        @unique
+  phone    String?       @unique
+  name     String
+  photoUrl String?
+  role     Role          @default(USER)
+  status   AccountStatus @default(PENDING)
+
   // KYC Info
   kycDocumentId String?
   kycVerifiedAt DateTime?
@@ -42,10 +42,11 @@ model User {
   // WebAuthn / Passkeys
   currentChallenge String?
   authenticators   Authenticator[]
-  reports        Report[]
+  reports          Report[]
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  pushSubscriptions PushSubscription[]
 }
 
 model Authenticator {
@@ -57,8 +58,8 @@ model Authenticator {
   credentialBackedUp   Boolean
   transports           String?
 
-  userId               String
-  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum ReportType {
@@ -94,10 +95,10 @@ model Report {
   status              ReportStatus @default(ACTIVE)
 
   // Map tracking fields (from old LossEvent)
-  latitude            Float?
-  longitude           Float?
-  radiusKm            Float        @default(1.0)
-  lastExpandedAt      DateTime     @default(now())
+  latitude       Float?
+  longitude      Float?
+  radiusKm       Float    @default(1.0)
+  lastExpandedAt DateTime @default(now())
 
   // Specific fields for Mascotas & Personas
   name                String?
@@ -112,44 +113,44 @@ model Report {
   appearance          String?
 
   // Ownership (Mock for now, via LocalStorage token)
-  creatorId           String?
+  creatorId String?
 
   // Social & Matching
-  comments            Comment[]
-  matchClaims         MatchClaim[]
+  comments    Comment[]
+  matchClaims MatchClaim[]
 
   // Security & Approval
-  requiresApproval    Boolean        @default(false)
-  approvalStatus      ApprovalStatus @default(APPROVED)
+  requiresApproval Boolean        @default(false)
+  approvalStatus   ApprovalStatus @default(APPROVED)
 
-  userId              String?
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @updatedAt
+  userId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user                User?        @relation(fields: [userId], references: [id])
-  sightings           Sighting[]
-  searchEndorsements  SearchEndorsement[]
+  user               User?               @relation(fields: [userId], references: [id])
+  sightings          Sighting[]
+  searchEndorsements SearchEndorsement[]
 }
 
 model SearchEndorsement {
-  id          String   @id @default(uuid())
-  reportId    String
-  endorserId  String
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  reportId   String
+  endorserId String
+  createdAt  DateTime @default(now())
 
-  report      Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  endorser    User     @relation(fields: [endorserId], references: [id], onDelete: Cascade)
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  endorser User   @relation(fields: [endorserId], references: [id], onDelete: Cascade)
 
   @@unique([reportId, endorserId])
 }
 
 model Endorsement {
-  id          String   @id @default(uuid())
-  endorserId  String
-  endorser    User     @relation("GivenEndorsements", fields: [endorserId], references: [id], onDelete: Cascade)
-  endorseeId  String
-  endorsee    User     @relation("ReceivedEndorsements", fields: [endorseeId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  endorserId String
+  endorser   User     @relation("GivenEndorsements", fields: [endorserId], references: [id], onDelete: Cascade)
+  endorseeId String
+  endorsee   User     @relation("ReceivedEndorsements", fields: [endorseeId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 
   @@unique([endorserId, endorseeId])
 }
@@ -163,21 +164,21 @@ model OTP {
 }
 
 model Sighting {
-  id              String      @id @default(uuid())
-  reportId        String
-  report          Report      @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  
-  reporterId      String?
-  reporter        User?       @relation(fields: [reporterId], references: [id], onDelete: Cascade)
-  
-  latitude        Float
-  longitude       Float
-  
-  comment         String?
-  photoUrl        String?
-  voiceNoteUrl    String?
+  id       String @id @default(uuid())
+  reportId String
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
 
-  createdAt       DateTime    @default(now())
+  reporterId String?
+  reporter   User?   @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  latitude  Float
+  longitude Float
+
+  comment      String?
+  photoUrl     String?
+  voiceNoteUrl String?
+
+  createdAt DateTime @default(now())
 }
 
 model Comment {
@@ -186,8 +187,8 @@ model Comment {
   author    String   @default("Anónimo")
   createdAt DateTime @default(now())
 
-  reportId  String
-  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reportId String
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
 }
 
 model MatchClaim {
@@ -196,10 +197,9 @@ model MatchClaim {
   photoUrl  String
   createdAt DateTime @default(now())
 
-  reportId  String
-  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reportId String
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
 }
-
 
 model Ad {
   id        String   @id @default(cuid())
@@ -210,4 +210,14 @@ model Ad {
   priority  Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
 }
