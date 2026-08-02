@@ -48,11 +48,12 @@ export async function POST(request: Request) {
       }
     });
 
-    // Disparar notificaciones push en segundo plano
+    // Disparar notificaciones push
     try {
       const protocol = request.headers.get('x-forwarded-proto') || 'http';
       const host = request.headers.get('host') || 'localhost:3000';
-      fetch(`${protocol}://${host}/api/notifications/send`, {
+      // Await is critical in Vercel so the serverless function doesn't freeze before it finishes
+      await fetch(`${protocol}://${host}/api/notifications/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
           message: `${category} en ${location}. Toca para ayudar.`,
           url: `/reporte/${report.id}`
         })
-      }).catch(e => console.error('Error in background push fetch:', e));
+      });
     } catch (e) {
       console.error('Failed to initiate push fetch:', e);
     }

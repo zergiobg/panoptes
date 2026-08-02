@@ -54,6 +54,43 @@ function ReportarForm() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compress to JPEG
+        };
+        img.onerror = (error) => reject(error);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -69,14 +106,10 @@ function ReportarForm() {
 
     try {
       const uploadPromises = filesToUpload.map(async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await res.json();
-        return data.success ? data.url : null;
+        // En Vercel, el sistema de archivos es read-only.
+        // Solución robusta para MVP: Comprimir y usar Base64 directamente en BD.
+        const base64 = await compressImage(file);
+        return base64;
       });
 
       const results = await Promise.all(uploadPromises);
@@ -93,7 +126,7 @@ function ReportarForm() {
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error('Error compressing/uploading image:', error);
     }
     setLoading(false);
   };
