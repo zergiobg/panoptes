@@ -123,13 +123,21 @@ export default function Home() {
                 )}
               </Link>
               <Link href="/admin/login" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
-                <LogIn size={16} /> <span className="hide-on-mobile">Acceso</span>
+                <LogIn size={16} /> <span className="hide-on-mobile">SysAdmin</span>
               </Link>
             </>
           )}
-          <Link href="/register" className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', textDecoration: 'none' }}>
-            Unirse
-          </Link>
+
+          {!currentUser && (
+            <>
+              <Link href="/login" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', textDecoration: 'none' }}>
+                <LogIn size={16} /> <span className="hide-on-mobile">Ingresar</span>
+              </Link>
+              <Link href="/register" className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', textDecoration: 'none' }}>
+                Unirse
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 

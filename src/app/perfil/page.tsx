@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { User, Shield, Lock, FileText, MessageSquare, LogOut, Loader2 } from 'lucide-react';
+import { User, Shield, Lock, FileText, MessageSquare, LogOut, Loader2, Home } from 'lucide-react';
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -29,6 +29,17 @@ export default function ProfilePage() {
                 router.push('/login');
             });
     }, [router]);
+
+    const handleLogout = async () => {
+        setSubmitting(true);
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            router.push('/login');
+        } catch (err) {
+            console.error('Logout error:', err);
+            setSubmitting(false);
+        }
+    };
 
     const handlePasswordChange = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -116,10 +127,13 @@ export default function ProfilePage() {
                         <MessageSquare size={18} /> Soporte
                     </button>
                     <Link href="/" style={{ textDecoration: 'none' }}>
-                        <button className="input-glass" style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,51,51,0.1)', color: '#ff3333', border: '1px solid rgba(255,51,51,0.3)', cursor: 'pointer' }}>
-                            <LogOut size={18} /> Volver al Inicio
+                        <button className="input-glass" style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid transparent', cursor: 'pointer' }}>
+                            <Home size={18} /> Volver al Inicio
                         </button>
                     </Link>
+                    <button onClick={handleLogout} className="input-glass" style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,51,51,0.1)', color: '#ff3333', border: '1px solid rgba(255,51,51,0.3)', cursor: 'pointer' }} disabled={submitting}>
+                        <LogOut size={18} /> Cerrar Sesión
+                    </button>
                 </div>
             </div>
 
