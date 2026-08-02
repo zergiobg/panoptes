@@ -93,9 +93,13 @@ export async function GET(request: Request) {
       };
     }
 
-    // Si no es admin, solo mostrar los aprobados
+    // Si no es admin, solo mostrar los aprobados y excluir los de usuarios suspendidos
     if (!admin) {
       where.approvalStatus = 'APPROVED';
+      where.OR = [
+        { userId: null },
+        { user: { status: { not: 'SUSPENDED' } } }
+      ];
     }
 
     const reports = await prisma.report.findMany({

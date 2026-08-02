@@ -45,10 +45,15 @@ export default function PushManager() {
     const handleSubscribe = async () => {
         setLoading(true);
         try {
+            // Fetch public key from server
+            const pkRes = await fetch('/api/notifications/public-key');
+            const pkData = await pkRes.json();
+            const serverPublicKey = pkData.publicKey || VAPID_PUBLIC_KEY;
+
             const reg = await navigator.serviceWorker.ready;
             const sub = await reg.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+                applicationServerKey: urlBase64ToUint8Array(serverPublicKey)
             });
 
             // Retrieve userId from localStorage or cookie if auth is integrated

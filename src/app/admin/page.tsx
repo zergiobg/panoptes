@@ -86,6 +86,39 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleUserAction = async (userId: string, action: 'SUSPEND' | 'ACTIVATE' | 'DELETE') => {
+        if (action === 'DELETE' && !confirm('¿Estás seguro de eliminar este usuario y todos sus reportes permanentemente?')) return;
+        
+        setActionMsg('');
+        try {
+            if (action === 'DELETE') {
+                const res = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    setActionMsg('Usuario eliminado permanentemente.');
+                } else {
+                    setActionMsg(data.error);
+                }
+            } else {
+                const status = action === 'SUSPEND' ? 'SUSPENDED' : 'ACTIVE';
+                const res = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    setActionMsg(`Usuario ${status === 'SUSPENDED' ? 'suspendido' : 'activado'} exitosamente.`);
+                } else {
+                    setActionMsg(data.error);
+                }
+            }
+            fetchPending();
+        } catch {
+            setActionMsg('Error procesando la accion de usuario.');
+        }
+    };
+
     const statusColor = (status: string) => {
         if (status === 'ACTIVE') return '#33cc66';
         if (status === 'RED_FLAG') return '#ff3333';
@@ -366,6 +399,27 @@ export default function AdminDashboard() {
                                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '4px 0' }}>📱 {user.phone || 'N/A'}</p>
                                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', margin: '8px 0 0 0' }}>Registrado: {new Date(user.createdAt).toLocaleDateString()}</p>
                                             <p style={{ color: '#555', fontSize: '0.75rem', margin: '2px 0' }}>ID: {user.id}</p>
+                                            
+                                            {/* Moderation Controls */}
+                                            {user.email !== 'sergio@bochica.network' && (
+                                                <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                                                    {user.status === 'SUSPENDED' ? (
+                                                        <button onClick={() => handleUserAction(user.id, 'ACTIVATE')}
+                                                            style={{ padding: '6px 12px', background: 'rgba(51,204,102,0.1)', border: '1px solid #33cc66', color: '#33cc66', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer' }}>
+                                                            🟢 Restaurar Cuenta
+                                                        </button>
+                                                    ) : (
+                                                        <button onClick={() => handleUserAction(user.id, 'SUSPEND')}
+                                                            style={{ padding: '6px 12px', background: 'rgba(255,170,0,0.1)', border: '1px solid #ffaa00', color: '#ffaa00', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer' }}>
+                                                            🛑 Suspender
+                                                        </button>
+                                                    )}
+                                                    <button onClick={() => handleUserAction(user.id, 'DELETE')}
+                                                        style={{ padding: '6px 12px', background: 'rgba(255,60,60,0.1)', border: '1px solid #ff3c3c', color: '#ff3c3c', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer' }}>
+                                                        🗑️ Eliminar
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* User Interactions */}
