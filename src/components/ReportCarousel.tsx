@@ -27,24 +27,24 @@ export default function ReportCarousel() {
         setReports([
           {
             id: '1',
-            title: 'Lost Golden Retriever',
-            description: 'Friendly golden retriever lost near Central Park. Wearing a red collar.',
+            title: 'Golden Retriever Perdido',
+            description: 'Se perdió un golden retriever amigable cerca del Parque Central. Lleva un collar rojo.',
             date: '2026-08-01',
             status: 'Lost',
             imageUrl: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=800'
           },
           {
             id: '2',
-            title: 'Found Keys',
-            description: 'Set of car keys found at the coffee shop downtown.',
+            title: 'Llaves Encontradas',
+            description: 'Juego de llaves de auto encontrado en la cafetería del centro.',
             date: '2026-07-31',
             status: 'Found',
             imageUrl: 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&q=80&w=800'
           },
           {
             id: '3',
-            title: 'Lost Wallet',
-            description: 'Brown leather wallet lost somewhere on 5th Avenue.',
+            title: 'Billetera Perdida',
+            description: 'Billetera de cuero marrón extraviada en algún lugar de la Quinta Avenida.',
             date: '2026-07-30',
             status: 'Lost',
             imageUrl: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&q=80&w=800'
