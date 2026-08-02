@@ -4,14 +4,14 @@ import prisma from '@/lib/prisma';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { targetUserId, endorserId, action } = body;
+        const { targetUserId, endorserEmail, action } = body;
         // action: "APPROVE" | "REJECT"
 
-        if (!targetUserId || !endorserId || !action) {
+        if (!targetUserId || !endorserEmail || !action) {
             return NextResponse.json({ error: 'Faltan parámetros requeridos.' }, { status: 400 });
         }
 
-        const endorser = await prisma.user.findUnique({ where: { id: endorserId } });
+        const endorser = await prisma.user.findUnique({ where: { email: endorserEmail } });
         if (!endorser || (endorser.status !== 'ACTIVE' && endorser.role !== 'ADMIN')) {
             return NextResponse.json({ error: 'Tu cuenta no tiene los privilegios para endosar.' }, { status: 403 });
         }
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         try {
             await prisma.endorsement.create({
                 data: {
-                    endorserId,
+                    endorserId: endorser.id,
                     endorseeId: targetUserId
                 }
             });

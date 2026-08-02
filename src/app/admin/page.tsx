@@ -54,7 +54,7 @@ export default function AdminDashboard() {
             const res = await fetch('/api/kyc/endorse', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ targetUserId, endorserId: ADMIN_ID, action })
+                body: JSON.stringify({ targetUserId, endorserEmail: 'sergio@bochica.network', action })
             });
             const data = await res.json();
             setActionMsg(data.message || data.error);
