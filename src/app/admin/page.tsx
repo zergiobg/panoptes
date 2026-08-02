@@ -91,6 +91,8 @@ export default function AdminDashboard() {
         return '#ffcc00'; // PENDING
     };
 
+    const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'USERS' | 'REPORTS'>('DASHBOARD');
+
     return (
         <main style={{ padding: '40px 20px', minHeight: '100vh' }}>
             <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -105,13 +107,80 @@ export default function AdminDashboard() {
                     </div>
                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                         <Link href="/admin/ads" style={{ color: 'var(--accent-main)', fontSize: '0.9rem' }}>Gestionar Ads</Link>
-                        <Link href="/" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>← Volver</Link>
+                        <Link href="/" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>← Volver al sitio</Link>
                     </div>
                 </div>
 
-                {/* Stats row - Users */}
-                {stats && (
-                    <div style={{ marginBottom: '40px' }}>
+                {/* MENU DE NAVEGACION POR BOTONES */}
+                <div style={{ display: 'flex', gap: '15px', marginBottom: '40px', flexWrap: 'wrap' }}>
+                    <button 
+                        onClick={() => setActiveTab('DASHBOARD')}
+                        className={activeTab === 'DASHBOARD' ? 'glass-panel' : ''}
+                        style={{ 
+                            flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
+                            background: activeTab === 'DASHBOARD' ? 'var(--accent-main)' : 'rgba(255,255,255,0.05)',
+                            color: activeTab === 'DASHBOARD' ? '#000' : 'var(--text-primary)',
+                            border: activeTab === 'DASHBOARD' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '16px', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 'bold'
+                        }}>
+                        <Activity size={32} />
+                        Métricas y Resumen
+                    </button>
+                    <button 
+                        onClick={() => setActiveTab('USERS')}
+                        className={activeTab === 'USERS' ? 'glass-panel' : ''}
+                        style={{ 
+                            flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
+                            background: activeTab === 'USERS' ? 'var(--accent-main)' : 'rgba(255,255,255,0.05)',
+                            color: activeTab === 'USERS' ? '#000' : 'var(--text-primary)',
+                            border: activeTab === 'USERS' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '16px', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 'bold'
+                        }}>
+                        <Users size={32} />
+                        Gestión de Usuarios
+                        {users.length > 0 && (
+                            <span style={{ background: '#ff3333', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontSize: '0.75rem', position: 'absolute', transform: 'translate(40px, -40px)' }}>{users.length}</span>
+                        )}
+                    </button>
+                    <button 
+                        onClick={() => setActiveTab('REPORTS')}
+                        className={activeTab === 'REPORTS' ? 'glass-panel' : ''}
+                        style={{ 
+                            flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
+                            background: activeTab === 'REPORTS' ? 'var(--accent-main)' : 'rgba(255,255,255,0.05)',
+                            color: activeTab === 'REPORTS' ? '#000' : 'var(--text-primary)',
+                            border: activeTab === 'REPORTS' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '16px', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 'bold'
+                        }}>
+                        <AlertTriangle size={32} />
+                        Reportes Pendientes
+                        {pendingReports.length > 0 && (
+                            <span style={{ background: '#ffcc00', color: '#000', padding: '2px 8px', borderRadius: '10px', fontSize: '0.75rem', position: 'absolute', transform: 'translate(45px, -40px)' }}>{pendingReports.length}</span>
+                        )}
+                    </button>
+                    <Link href="/admin/ads" style={{ textDecoration: 'none', flex: 1 }}>
+                        <button 
+                            style={{ 
+                                width: '100%', height: '100%', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
+                                background: 'rgba(255,255,255,0.05)', color: 'var(--text-primary)',
+                                border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 'bold'
+                            }}>
+                            <Megaphone size={32} />
+                            Gestión de Anuncios
+                        </button>
+                    </Link>
+                </div>
+
+                {/* Action feedback */}
+                {actionMsg && (
+                    <div style={{ padding: '12px', marginBottom: '20px', borderRadius: '8px', background: 'rgba(255,126,51,0.1)', border: '1px solid var(--accent-main)' }}>
+                        {actionMsg}
+                    </div>
+                )}
+
+                {/* Stats row - Dashboard */}
+                {activeTab === 'DASHBOARD' && stats && (
+                    <div style={{ marginBottom: '40px' }} className="animate-in">
                         <h2 style={{ fontSize: '1.2rem', marginBottom: '15px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <Users size={20} /> Identidades (Usuarios)
                         </h2>
@@ -138,7 +207,6 @@ export default function AdminDashboard() {
                             <MapPin size={20} /> Elementos y Sucesos
                         </h2>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '15px' }}>
-                            {/* Perdidos vs Encontrados */}
                             <div className="glass-panel" style={{ padding: '20px' }}>
                                 <h3 style={{ margin: '0 0 15px 0', fontSize: '1rem', color: 'var(--text-secondary)' }}>Distribución</h3>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
@@ -150,8 +218,6 @@ export default function AdminDashboard() {
                                     <strong style={{ fontSize: '1.2rem' }}>{stats.reports.byType.FOUND || 0}</strong>
                                 </div>
                             </div>
-                            
-                            {/* Categorías */}
                             <div className="glass-panel" style={{ padding: '20px' }}>
                                 <h3 style={{ margin: '0 0 15px 0', fontSize: '1rem', color: 'var(--text-secondary)' }}>Por Categoría</h3>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
@@ -165,7 +231,6 @@ export default function AdminDashboard() {
                             </div>
                         </div>
 
-                        {/* Demografía de Personas */}
                         <h2 style={{ fontSize: '1.2rem', margin: '30px 0 15px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <Activity size={20} /> Demografía de Casos (Personas)
                         </h2>
@@ -214,130 +279,127 @@ export default function AdminDashboard() {
                     </div>
                 )}
 
-                {/* Action feedback */}
-                {actionMsg && (
-                    <div style={{ padding: '12px', marginBottom: '20px', borderRadius: '8px', background: 'rgba(255,126,51,0.1)', border: '1px solid var(--accent-main)' }}>
-                        {actionMsg}
-                    </div>
-                )}
-
                 {/* Users table */}
-                <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
-                    <div style={{ padding: '20px', borderBottom: '1px solid var(--border-glass)' }}>
-                        <h3 style={{ margin: 0 }}>Usuarios en Revisión KYC</h3>
-                    </div>
-
-                    {loading ? (
-                        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Cargando identidades...</div>
-                    ) : users.length === 0 ? (
-                        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                            ✅ No hay usuarios pendientes de revisión en este momento.
+                {activeTab === 'USERS' && (
+                    <div className="glass-panel animate-in" style={{ padding: '0', overflow: 'hidden' }}>
+                        <div style={{ padding: '20px', borderBottom: '1px solid var(--border-glass)' }}>
+                            <h3 style={{ margin: 0 }}>Usuarios en Revisión KYC</h3>
                         </div>
-                    ) : (
-                        users.map((user, i) => (
-                            <div key={user.id} style={{
-                                padding: '20px',
-                                borderBottom: i < users.length - 1 ? '1px solid var(--border-glass)' : 'none',
-                                display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px'
-                            }}>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
-                                        <span style={{
-                                            display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600,
-                                            backgroundColor: `${statusColor(user.status)}22`, color: statusColor(user.status), border: `1px solid ${statusColor(user.status)}44`
-                                        }}>{user.status}</span>
-                                        <strong>{user.name}</strong>
-                                    </div>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '2px 0' }}>📧 {user.email} {user.phone ? `| 📱 ${user.phone}` : ''}</p>
-                                    {user.endorser && (
-                                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '2px 0' }}>
-                                            🔗 Endosador: {user.endorser.name} ({user.endorser.status})
-                                        </p>
-                                    )}
-                                    <p style={{ color: '#555', fontSize: '0.75rem', margin: '2px 0' }}>ID: {user.id}</p>
-                                </div>
 
-                                <div style={{ display: 'flex', gap: '10px' }}>
-                                    <button onClick={() => handleAction(user.id, 'APPROVE')}
-                                        style={{ padding: '8px 16px', background: 'rgba(51,204,102,0.2)', border: '1px solid #33cc66', color: '#33cc66', borderRadius: '6px', cursor: 'pointer' }}>
-                                        Aprobar
-                                    </button>
-                                    <button onClick={() => handleAction(user.id, 'REJECT')}
-                                        style={{ padding: '8px 16px', background: 'rgba(255,60,60,0.2)', border: '1px solid #ff3c3c', color: '#ff3c3c', borderRadius: '6px', cursor: 'pointer' }}>
-                                        Rechazar
-                                    </button>
-                                </div>
+                        {loading ? (
+                            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Cargando identidades...</div>
+                        ) : users.length === 0 ? (
+                            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                                ✅ No hay usuarios pendientes de revisión en este momento.
                             </div>
-                        ))
-                    )}
-                </div>
-
-                {/* Reports table */}
-                <div className="glass-panel" style={{ padding: '0', overflow: 'hidden', marginTop: '30px' }}>
-                    <div style={{ padding: '20px', borderBottom: '1px solid var(--border-glass)' }}>
-                        <h3 style={{ margin: 0 }}>Reportes de Alto Valor Pendientes</h3>
-                    </div>
-
-                    {loading ? (
-                        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Cargando reportes...</div>
-                    ) : pendingReports.length === 0 ? (
-                        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                            ✅ No hay reportes pendientes de aprobación en este momento.
-                        </div>
-                    ) : (
-                        pendingReports.map((report, i) => (
-                            <div key={report.id} style={{
-                                padding: '20px',
-                                borderBottom: i < pendingReports.length - 1 ? '1px solid var(--border-glass)' : 'none',
-                                display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px'
-                            }}>
-                                <div style={{ flex: 1, display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
-                                    {/* Thumbnail */}
-                                    <div style={{
-                                        width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden',
-                                        background: 'rgba(255,255,255,0.05)', flexShrink: 0
-                                    }}>
-                                        {report.photoUrl ? (
-                                            <img src={report.photoUrl} alt="Reporte" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        ) : (
-                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>
-                                                📷
-                                            </div>
-                                        )}
-                                    </div>
-                                    
-                                    {/* Info */}
-                                    <div>
+                        ) : (
+                            users.map((user, i) => (
+                                <div key={user.id} style={{
+                                    padding: '20px',
+                                    borderBottom: i < users.length - 1 ? '1px solid var(--border-glass)' : 'none',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px'
+                                }}>
+                                    <div style={{ flex: 1 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
                                             <span style={{
                                                 display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600,
-                                                backgroundColor: `rgba(255,204,0,0.2)`, color: '#ffcc00', border: `1px solid rgba(255,204,0,0.4)`
-                                            }}>{report.category}</span>
-                                            <strong>{report.description.substring(0, 80)}{report.description.length > 80 ? '...' : ''}</strong>
+                                                backgroundColor: `${statusColor(user.status)}22`, color: statusColor(user.status), border: `1px solid ${statusColor(user.status)}44`
+                                            }}>{user.status}</span>
+                                            <strong>{user.name}</strong>
                                         </div>
-                                        {report.brandModel && <p style={{ color: 'var(--text-primary)', fontSize: '0.85rem', margin: '2px 0', fontWeight: 500 }}>🚙 {report.brandModel} {report.color && `(${report.color})`} {report.licensePlate && `[${report.licensePlate}]`}</p>}
-                                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '2px 0' }}>📍 {report.location} | 🗓️ {new Date(report.eventDate).toLocaleDateString()}</p>
-                                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '4px' }}>
-                                            <p style={{ color: '#555', fontSize: '0.75rem', margin: 0 }}>ID: {report.id}</p>
-                                            <a href={`/reporte/${report.id}`} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-main)', fontSize: '0.75rem', textDecoration: 'underline' }}>Ver detalle ↗</a>
-                                        </div>
+                                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '2px 0' }}>📧 {user.email} {user.phone ? `| 📱 ${user.phone}` : ''}</p>
+                                        {user.endorser && (
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '2px 0' }}>
+                                                🔗 Endosador: {user.endorser.name} ({user.endorser.status})
+                                            </p>
+                                        )}
+                                        <p style={{ color: '#555', fontSize: '0.75rem', margin: '2px 0' }}>ID: {user.id}</p>
+                                    </div>
+
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button onClick={() => handleAction(user.id, 'APPROVE')}
+                                            style={{ padding: '8px 16px', background: 'rgba(51,204,102,0.2)', border: '1px solid #33cc66', color: '#33cc66', borderRadius: '6px', cursor: 'pointer' }}>
+                                            Aprobar
+                                        </button>
+                                        <button onClick={() => handleAction(user.id, 'REJECT')}
+                                            style={{ padding: '8px 16px', background: 'rgba(255,60,60,0.2)', border: '1px solid #ff3c3c', color: '#ff3c3c', borderRadius: '6px', cursor: 'pointer' }}>
+                                            Rechazar
+                                        </button>
                                     </div>
                                 </div>
+                            ))
+                        )}
+                    </div>
+                )}
 
-                                <div style={{ display: 'flex', gap: '10px' }}>
-                                    <button onClick={() => handleReportAction(report.id, 'APPROVE')}
-                                        style={{ padding: '8px 16px', background: 'rgba(51,204,102,0.2)', border: '1px solid #33cc66', color: '#33cc66', borderRadius: '6px', cursor: 'pointer' }}>
-                                        Aprobar Publicación
-                                    </button>
-                                    <button onClick={() => handleReportAction(report.id, 'REJECT')}
-                                        style={{ padding: '8px 16px', background: 'rgba(255,60,60,0.2)', border: '1px solid #ff3c3c', color: '#ff3c3c', borderRadius: '6px', cursor: 'pointer' }}>
-                                        Rechazar
-                                    </button>
-                                </div>
+                {/* Reports table */}
+                {activeTab === 'REPORTS' && (
+                    <div className="glass-panel animate-in" style={{ padding: '0', overflow: 'hidden', marginTop: '0' }}>
+                        <div style={{ padding: '20px', borderBottom: '1px solid var(--border-glass)' }}>
+                            <h3 style={{ margin: 0 }}>Reportes de Alto Valor Pendientes</h3>
+                        </div>
+
+                        {loading ? (
+                            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Cargando reportes...</div>
+                        ) : pendingReports.length === 0 ? (
+                            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                                ✅ No hay reportes pendientes de aprobación en este momento.
                             </div>
-                        ))
-                    )}
-                </div>
+                        ) : (
+                            pendingReports.map((report, i) => (
+                                <div key={report.id} style={{
+                                    padding: '20px',
+                                    borderBottom: i < pendingReports.length - 1 ? '1px solid var(--border-glass)' : 'none',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px'
+                                }}>
+                                    <div style={{ flex: 1, display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
+                                        {/* Thumbnail */}
+                                        <div style={{
+                                            width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden',
+                                            background: 'rgba(255,255,255,0.05)', flexShrink: 0
+                                        }}>
+                                            {report.photoUrl ? (
+                                                <img src={report.photoUrl} alt="Reporte" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            ) : (
+                                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>
+                                                    📷
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        {/* Info */}
+                                        <div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
+                                                <span style={{
+                                                    display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600,
+                                                    backgroundColor: `rgba(255,204,0,0.2)`, color: '#ffcc00', border: `1px solid rgba(255,204,0,0.4)`
+                                                }}>{report.category}</span>
+                                                <strong>{report.description.substring(0, 80)}{report.description.length > 80 ? '...' : ''}</strong>
+                                            </div>
+                                            {report.brandModel && <p style={{ color: 'var(--text-primary)', fontSize: '0.85rem', margin: '2px 0', fontWeight: 500 }}>🚙 {report.brandModel} {report.color && `(${report.color})`} {report.licensePlate && `[${report.licensePlate}]`}</p>}
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '2px 0' }}>📍 {report.location} | 🗓️ {new Date(report.eventDate).toLocaleDateString()}</p>
+                                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '4px' }}>
+                                                <p style={{ color: '#555', fontSize: '0.75rem', margin: 0 }}>ID: {report.id}</p>
+                                                <a href={`/reporte/${report.id}`} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-main)', fontSize: '0.75rem', textDecoration: 'underline' }}>Ver detalle ↗</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button onClick={() => handleReportAction(report.id, 'APPROVE')}
+                                            style={{ padding: '8px 16px', background: 'rgba(51,204,102,0.2)', border: '1px solid #33cc66', color: '#33cc66', borderRadius: '6px', cursor: 'pointer' }}>
+                                            Aprobar Publicación
+                                        </button>
+                                        <button onClick={() => handleReportAction(report.id, 'REJECT')}
+                                            style={{ padding: '8px 16px', background: 'rgba(255,60,60,0.2)', border: '1px solid #ff3c3c', color: '#ff3c3c', borderRadius: '6px', cursor: 'pointer' }}>
+                                            Rechazar
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
             </div>
         </main>
     );

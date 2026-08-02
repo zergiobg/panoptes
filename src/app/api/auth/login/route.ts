@@ -45,6 +45,18 @@ export async function POST(request: Request) {
             maxAge: 60 * 60 * 24 * 7 // 7 days
         });
 
+        // Set admin session if this is the genesis admin
+        if (user.email === 'sergio@bochica.network' || user.role === 'ADMIN') {
+            response.cookies.set({
+                name: 'admin_session',
+                value: 'true',
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7 // 7 days
+            });
+        }
+
         return response;
 
     } catch (error) {
