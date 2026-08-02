@@ -11,6 +11,7 @@ export default function Register() {
         name: '',
         email: '',
         phone: '',
+        password: '',
         otpCode: '',
         photo: null as File | null
     });
@@ -58,6 +59,7 @@ export default function Register() {
                     name: formData.name,
                     email: formData.email,
                     phone: formData.phone,
+                    password: formData.password,
                     otpCode: formData.otpCode,
                     photoUrl: 'pending_ai_validation'
                 })
@@ -129,6 +131,13 @@ export default function Register() {
                             <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem' }}>Teléfono Móvil</label>
                             <input required type="tel" className="input-glass"
                                 value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                            />
+                        </div>
+
+                        <div>
+                            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem' }}>Contraseña Segura</label>
+                            <input required type="password" className="input-glass" minLength={6}
+                                value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
                             />
                         </div>
 

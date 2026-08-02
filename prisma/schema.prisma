@@ -27,6 +27,11 @@ model User {
   role     Role          @default(USER)
   status   AccountStatus @default(PENDING)
 
+  // Auth fields
+  password         String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
   // KYC Info
   kycDocumentId String?
   kycVerifiedAt DateTime?
