@@ -16,6 +16,7 @@ export default function Register() {
     });
 
     const [loading, setLoading] = useState(false);
+    const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
 
     const requestOtp = async (e: React.FormEvent) => {
@@ -147,7 +148,21 @@ export default function Register() {
                             </label>
                         </div>
 
-                        <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '10px', padding: '16px' }}>
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginTop: '10px', marginBottom: '10px' }}>
+                            <input 
+                                type="checkbox" 
+                                id="privacy" 
+                                required
+                                checked={acceptedPrivacy}
+                                onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+                                style={{ marginTop: '4px', cursor: 'pointer', width: '16px', height: '16px' }}
+                            />
+                            <label htmlFor="privacy" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4', cursor: 'pointer' }}>
+                                Acepto los Términos y Condiciones y autorizo el tratamiento de mis datos personales conforme a la <a href="/privacidad" target="_blank" style={{ color: 'var(--accent-main)', textDecoration: 'underline' }}>Autorización de Datos Personales</a> y la Política de Privacidad de Panoptes Bochica Networks.
+                            </label>
+                        </div>
+
+                        <button type="submit" className="btn-primary" disabled={loading || !acceptedPrivacy} style={{ marginTop: '10px', padding: '16px', opacity: (!acceptedPrivacy || loading) ? 0.5 : 1 }}>
                             {loading ? 'Fijando grafo Blockchain y KYC...' : 'Convertirme en Miembro (Pendiente de Endoso)'}
                         </button>
                     </form>
