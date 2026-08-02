@@ -48,6 +48,23 @@ export async function POST(request: Request) {
       }
     });
 
+    // Disparar notificaciones push en segundo plano
+    try {
+      const protocol = request.headers.get('x-forwarded-proto') || 'http';
+      const host = request.headers.get('host') || 'localhost:3000';
+      fetch(`${protocol}://${host}/api/notifications/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: `Panoptes: ${type === 'LOST' ? 'Perdido' : 'Encontrado'}`,
+          message: `${category} en ${location}. Toca para ayudar.`,
+          url: `/reporte/${report.id}`
+        })
+      }).catch(e => console.error('Error in background push fetch:', e));
+    } catch (e) {
+      console.error('Failed to initiate push fetch:', e);
+    }
+
     return NextResponse.json({ success: true, report });
   } catch (error) {
     console.error('Create Report Error:', error);

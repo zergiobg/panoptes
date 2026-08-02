@@ -45,12 +45,17 @@ export default function PushManager() {
                 applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
             });
 
+            // Retrieve userId from localStorage or cookie if auth is integrated
+            const userId = localStorage.getItem('panoptes_user_id') || undefined;
+
             // Send to backend
-            await fetch('/api/notifications/subscribe', {
+            const res = await fetch('/api/notifications/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subscription: sub }) // Add userId if auth is fully integrated
+                body: JSON.stringify({ subscription: sub, userId })
             });
+
+            if (!res.ok) throw new Error('Failed to save subscription');
 
             setIsSubscribed(true);
             alert('¡Alertas activadas con éxito! Recibirás notificaciones en tiempo real.');
@@ -61,7 +66,7 @@ export default function PushManager() {
         setLoading(false);
     };
 
-    if (!supported) return <p className="text-sm text-gray-500">Notificaciones Push no soportadas en este navegador.</p>;
+    if (!supported) return <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Notificaciones Push no soportadas en este navegador.</p>;
 
     return (
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', marginBottom: '30px', flexWrap: 'wrap', gap: '15px' }}>
