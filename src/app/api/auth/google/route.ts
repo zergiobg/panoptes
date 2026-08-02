@@ -7,6 +7,11 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const redirectUri = `${url.origin}/api/auth/google/callback`;
 
+    // If using dummy keys, skip Google's actual servers because they will reject "dummy_client_id"
+    if (GOOGLE_CLIENT_ID === 'dummy_client_id') {
+        return NextResponse.redirect(`${redirectUri}?code=dummy_authorization_code`);
+    }
+
     // CSRF token (state) could be added here for security
     const state = 'panoptes_oauth'; 
 
