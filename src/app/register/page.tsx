@@ -176,6 +176,25 @@ export default function Register() {
                         </button>
                     </form>
                 )}
+
+                <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+                        <span style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></span>
+                        <span style={{ padding: '0 10px', fontSize: '0.8rem' }}>O REGÍSTRATE CON</span>
+                        <span style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></span>
+                    </span>
+
+                    <a href="/api/auth/google" style={{ 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', 
+                        width: '100%', padding: '14px', background: 'white', color: '#333', 
+                        borderRadius: '8px', fontWeight: 'bold', textDecoration: 'none', marginBottom: '20px',
+                        transition: 'opacity 0.2s'
+                    }} onMouseOver={e => e.currentTarget.style.opacity = '0.9'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style={{ width: '20px', height: '20px' }} />
+                        Registrarse con Google
+                    </a>
+                </p>
+
             </div>
         </main>
     );
