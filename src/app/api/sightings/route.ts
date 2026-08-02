@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { authenticateAndCheckSuspension } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
+    const auth = await authenticateAndCheckSuspension();
+    if (auth.isSuspended) {
+        return NextResponse.json({ error: 'Cuenta Suspendida. Interacciones desactivadas.' }, { status: 403 });
+    }
+
     const { reportId, latitude, longitude, comment, photoUrl } = await req.json();
 
-    // In production, we'd extract the user from the session cookie here.
-    // For now, we allow anonymous sightings (reporterId = undefined).
-    
     const sighting = await prisma.sighting.create({
       data: {
         reportId,
-        reporterId: undefined, // Replace with actual user ID when sessions are added
+        reporterId: auth.user?.id || undefined,
         latitude,
         longitude,
         comment,

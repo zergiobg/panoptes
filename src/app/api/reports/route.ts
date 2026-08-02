@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { authenticateAndCheckSuspension } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
+    const auth = await authenticateAndCheckSuspension();
+    if (auth.isSuspended) {
+        return NextResponse.json({ success: false, error: 'Cuenta Suspendida. Interacciones desactivadas.' }, { status: 403 });
+    }
+
     const body = await request.json();
     const { 
       type, category, description, location, eventDate, photoUrl, photoUrls, aiSuggestedCategory, 

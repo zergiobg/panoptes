@@ -77,11 +77,19 @@ export default function Home() {
         borderBottom: '1px solid rgba(255,255,255,0.05)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {currentUser?.photoUrl && !currentUser.photoUrl.startsWith('pending') ? (
-            <img src={currentUser.photoUrl} alt={currentUser.name} style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-main)' }} />
+          {currentUser ? (
+            <Link href="/perfil" style={{ textDecoration: 'none' }}>
+              {currentUser?.photoUrl && !currentUser.photoUrl.startsWith('pending') ? (
+                <img src={currentUser.photoUrl} alt={currentUser.name} style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-main)', cursor: 'pointer' }} />
+              ) : (
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-main), #ffcc00)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', fontSize: '1.2rem', cursor: 'pointer' }}>
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </Link>
           ) : (
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-main), #ffcc00)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', fontSize: '1.2rem' }}>
-              {currentUser ? currentUser.name.charAt(0).toUpperCase() : 'P'}
+              P
             </div>
           )}
           <span style={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '-0.5px' }} className="hide-on-mobile">Panoptes</span>
