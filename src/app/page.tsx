@@ -48,9 +48,7 @@ export default function Home() {
     setLoading(true);
     try {
       let url = `/api/reports?`;
-      if (categoryFilter === 'Todos') {
-        url += `date=today`;
-      } else {
+      if (categoryFilter !== 'Todos') {
         url += `category=${encodeURIComponent(categoryFilter)}`;
       }
       const res = await fetch(url);
