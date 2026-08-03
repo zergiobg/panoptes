@@ -227,7 +227,7 @@ export default function Home() {
 
         {/* CATEGORY FILTERS */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '30px' }}>
-          {['Todos', 'Persona', 'Mascota', 'Vehículo', 'Dispositivos', 'Documento', 'Otro'].map(cat => (
+          {['Todos', 'Persona', 'Mascota', 'Vehículo', 'Llaves', 'Dispositivos', 'Artículo personal', 'Ropa', 'Documento', 'Otro'].map(cat => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
