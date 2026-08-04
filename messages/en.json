@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "notifications": "Notifications",
+    "activity": "Activity",
+    "map": "Map",
+    "admin": "Admin",
+    "login": "Sign In",
+    "join": "Join",
+    "profile": "Profile"
+  },
+  "hero": {
+    "title": "A thousand eyes.",
+    "subtitle": "One mission.",
+    "description": "The passive community search network. Report what you found or lost and let's help each other.",
+    "cta": "Report a Finding / Loss",
+    "featured": "Featured Cases"
+  },
+  "filters": {
+    "all": "All",
+    "person": "Person",
+    "pet": "Pet",
+    "vehicle": "Vehicle",
+    "keys": "Keys",
+    "devices": "Devices",
+    "personal": "Personal item",
+    "clothing": "Clothing",
+    "document": "Document",
+    "other": "Other"
+  },
+  "feed": {
+    "loading": "Loading reports...",
+    "empty": "No reports in this category yet.",
+    "empty_sub": "Be the first to report a finding or loss!",
+    "report_now": "Report now",
+    "lost": "LOST",
+    "found": "FOUND",
+    "view": "View details"
+  },
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Access your Panoptes account",
+    "email": "Email Address",
+    "password": "Password",
+    "forgot": "Forgot your password?",
+    "submit": "Sign In",
+    "submitting": "Signing in...",
+    "no_account": "Don't have an account?",
+    "join_now": "Join now",
+    "or_continue": "OR CONTINUE WITH",
+    "google": "Sign in with Google",
+    "errors": {
+      "suspended": "Your account is suspended. Please contact support.",
+      "invalid": "Invalid credentials.",
+      "generic": "Login error. Please try again."
+    }
+  },
+  "register": {
+    "title": "Join Panoptes",
+    "subtitle": "Create your account and help your community",
+    "step1_title": "Step 1: Verify your Email",
+    "step2_title": "Step 2: Complete your Profile",
+    "email_label": "Email Address to Verify",
+    "otp_label": "OTP Code (Check your Email)",
+    "name_label": "Full Name (Real)",
+    "phone_label": "Mobile Phone",
+    "password_label": "Secure Password",
+    "photo_label": "Upload Photo (Face ID / KYC)",
+    "photo_sublabel": "This photo will undergo AI verification tests.",
+    "privacy": "I accept the Terms and Conditions and authorize the processing of my personal data as described in the",
+    "privacy_link": "Personal Data Authorization",
+    "get_otp": "Get Secure OTP Code",
+    "submit": "Become a Member (Pending Endorsement)",
+    "submitting": "Registering...",
+    "generating": "Generating Token...",
+    "or_register": "OR REGISTER WITH",
+    "google": "Register with Google",
+    "already": "Already have an account?",
+    "login_now": "Sign in here"
+  },
+  "common": {
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Operation successful!"
+  }
+}

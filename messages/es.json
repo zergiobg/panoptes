@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "notifications": "Notificaciones",
+    "activity": "Actividad",
+    "map": "Mapa",
+    "admin": "Admin",
+    "login": "Ingresar",
+    "join": "Unirse",
+    "profile": "Perfil"
+  },
+  "hero": {
+    "title": "Miles de ojos.",
+    "subtitle": "Una sola misión.",
+    "description": "La red comunitaria de búsqueda pasiva. Reporta lo que encontraste o lo que perdiste y ayudemos juntos.",
+    "cta": "Reportar Hallazgo / Pérdida",
+    "featured": "Casos Destacados"
+  },
+  "filters": {
+    "all": "Todos",
+    "person": "Persona",
+    "pet": "Mascota",
+    "vehicle": "Vehículo",
+    "keys": "Llaves",
+    "devices": "Dispositivos",
+    "personal": "Artículo personal",
+    "clothing": "Ropa",
+    "document": "Documento",
+    "other": "Otro"
+  },
+  "feed": {
+    "loading": "Cargando reportes...",
+    "empty": "No hay reportes en esta categoría aún.",
+    "empty_sub": "¡Sé el primero en reportar un hallazgo o pérdida!",
+    "report_now": "Reportar ahora",
+    "lost": "PERDIDO",
+    "found": "ENCONTRADO",
+    "view": "Ver detalles"
+  },
+  "login": {
+    "title": "Bienvenido de vuelta",
+    "subtitle": "Accede a tu cuenta de Panoptes",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "forgot": "¿Olvidaste tu contraseña?",
+    "submit": "Entrar",
+    "submitting": "Ingresando...",
+    "no_account": "¿No tienes cuenta?",
+    "join_now": "Únete ahora",
+    "or_continue": "O CONTINÚA CON",
+    "google": "Ingresar con Google",
+    "errors": {
+      "suspended": "Tu cuenta está suspendida. Contacta soporte.",
+      "invalid": "Credenciales inválidas.",
+      "generic": "Error al iniciar sesión."
+    }
+  },
+  "register": {
+    "title": "Únete a Panoptes",
+    "subtitle": "Crea tu cuenta y ayuda a tu comunidad",
+    "step1_title": "Paso 1: Verifica tu Correo",
+    "step2_title": "Paso 2: Completa tu Perfil",
+    "email_label": "Correo Electrónico a Validar",
+    "otp_label": "Código OTP (Revisa tu Email)",
+    "name_label": "Nombre Completo (Real)",
+    "phone_label": "Teléfono Móvil",
+    "password_label": "Contraseña Segura",
+    "photo_label": "Subir Fotografía (Rostro ID / KYC)",
+    "photo_sublabel": "Esta foto pasará pruebas de Inteligencia Computacional.",
+    "privacy": "Acepto los Términos y Condiciones y autorizo el tratamiento de mis datos personales conforme a la",
+    "privacy_link": "Autorización de Datos Personales",
+    "get_otp": "Obtener Código OTP Segurizado",
+    "submit": "Convertirme en Miembro (Pendiente de Endoso)",
+    "submitting": "Fijando grafo Blockchain y KYC...",
+    "generating": "Generando Testigo...",
+    "or_register": "O REGÍSTRATE CON",
+    "google": "Registrarse con Google",
+    "already": "¿Ya tienes cuenta?",
+    "login_now": "Ingresa aquí"
+  },
+  "common": {
+    "back": "Volver",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "success": "¡Operación exitosa!"
+  }
+}
